@@ -95,6 +95,7 @@ export const getPlans = (): Plan[] => {
         "Soporte para múltiples sucursales",
         "Google Calendar y correos ilimitados",
         "Auditoría clínica y reportes avanzados",
+        "Gestión de contratos",
         "Soporte técnico prioritario 24/7"
       ]
     }
