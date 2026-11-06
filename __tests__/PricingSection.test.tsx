@@ -8,7 +8,6 @@ describe("PricingSection", () => {
     jest.resetModules();
     process.env = {
       ...originalEnv,
-      NEXT_PUBLIC_PAYPAL_BASE_URL: "https://www.sandbox.paypal.com/billing/plans",
       NEXT_PUBLIC_PAYPAL_PLAN_BASICO: "P-61L31376NX417651DNLWUKSQ",
       NEXT_PUBLIC_PAYPAL_PLAN_CLINICA: "P-5CC29855SK5899208NLWUMWI",
       NEXT_PUBLIC_PAYPAL_PLAN_PROFESIONAL: "P-5J121652NS326140HNLWUNNI",
@@ -32,7 +31,7 @@ describe("PricingSection", () => {
     expect(screen.getByText("Empresarial")).toBeInTheDocument();
   });
 
-  test("construye correctamente los enlaces de redireccion a PayPal con las variables de entorno", () => {
+  test("los botones de contratacion redirigen al formulario de registro con el plan_id correspondiente", () => {
     render(<PricingSection />);
 
     const btnBasico = screen.getByTestId("btn-contratar-basico");
@@ -40,39 +39,10 @@ describe("PricingSection", () => {
     const btnProfesional = screen.getByTestId("btn-contratar-profesional");
     const btnEmpresarial = screen.getByTestId("btn-contratar-empresarial");
 
-    expect(btnBasico).toHaveAttribute(
-      "href",
-      "https://www.sandbox.paypal.com/billing/plans/P-61L31376NX417651DNLWUKSQ"
-    );
-    expect(btnClinica).toHaveAttribute(
-      "href",
-      "https://www.sandbox.paypal.com/billing/plans/P-5CC29855SK5899208NLWUMWI"
-    );
-    expect(btnProfesional).toHaveAttribute(
-      "href",
-      "https://www.sandbox.paypal.com/billing/plans/P-5J121652NS326140HNLWUNNI"
-    );
-    expect(btnEmpresarial).toHaveAttribute(
-      "href",
-      "https://www.sandbox.paypal.com/billing/plans/P-64643939B6992035JNLWUOCY"
-    );
-  });
-
-  test("los botones de contratacion abren la pasarela en una nueva pestana de forma segura", () => {
-    render(<PricingSection />);
-
-    const botones = [
-      screen.getByTestId("btn-contratar-basico"),
-      screen.getByTestId("btn-contratar-clinica"),
-      screen.getByTestId("btn-contratar-profesional"),
-      screen.getByTestId("btn-contratar-empresarial"),
-    ];
-
-    botones.forEach((boton) => {
-      expect(boton).toHaveAttribute("target", "_blank");
-      expect(boton).toHaveAttribute("rel", "noopener noreferrer");
-      expect(boton).toHaveTextContent("Contratar");
-    });
+    expect(btnBasico).toHaveAttribute("href", "/registro?plan_id=P-61L31376NX417651DNLWUKSQ");
+    expect(btnClinica).toHaveAttribute("href", "/registro?plan_id=P-5CC29855SK5899208NLWUMWI");
+    expect(btnProfesional).toHaveAttribute("href", "/registro?plan_id=P-5J121652NS326140HNLWUNNI");
+    expect(btnEmpresarial).toHaveAttribute("href", "/registro?plan_id=P-64643939B6992035JNLWUOCY");
   });
 
   test("renderiza los limites de cuentas y pacientes requeridos para cada plan", () => {

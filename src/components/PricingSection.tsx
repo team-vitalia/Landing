@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getPlans } from "@/data/plans";
 import { Plan } from "@/types/plan";
 
@@ -9,41 +10,40 @@ export default function PricingSection({ plans }: PricingSectionProps) {
   const currentPlans = plans || getPlans();
 
   return (
-    <section id="planes" className="py-20 bg-slate-50 border-t border-slate-200">
+    <section id="planes" className="py-24 bg-gradient-to-b from-white via-slate-50 to-slate-100 border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-sm font-bold tracking-wider text-blue-600 uppercase">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 tracking-wide uppercase">
             Suscripciones Flexibles
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Planes adaptados a la escala de tu clínica
+          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
+            Planes adaptados al tamaño de tu clínica
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-600">
-            Comienza con la infraestructura SaaS adecuada para tu equipo.
-            Pagos mensuales automatizados y seguros con PayPal.
+          <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
+            Inicia tu transformación digital con la infraestructura SaaS adecuada. Sin plazos forzosos, con activación automática vía PayPal.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
           {currentPlans.map((plan) => (
             <div
               key={plan.id}
               data-testid="plan-card"
-              className={`relative flex flex-col rounded-3xl p-8 bg-white transition-all ${
+              className={`relative flex flex-col rounded-3xl p-8 bg-white transition-all duration-300 ${
                 plan.popular
-                  ? "border-2 border-blue-600 shadow-xl shadow-blue-600/10 scale-100 lg:-translate-y-2"
-                  : "border border-slate-200 shadow-sm hover:border-slate-300 hover:shadow-md"
+                  ? "border-2 border-blue-600 shadow-2xl shadow-blue-600/15 ring-4 ring-blue-600/5 lg:-translate-y-2.5 z-10"
+                  : "border border-slate-200/90 shadow-sm hover:border-blue-300 hover:shadow-xl hover:shadow-slate-200/50"
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-blue-600 text-white text-xs font-bold tracking-wide uppercase shadow-sm">
-                  Recomendado
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold tracking-wider uppercase shadow-md shadow-blue-500/25">
+                  Más Popular
                 </div>
               )}
 
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-slate-900">{plan.name}</h3>
-                <p className="mt-2 text-xs text-slate-500 min-h-[32px]">
+                <p className="mt-2 text-xs text-slate-500 min-h-[36px] leading-relaxed">
                   {plan.tagline}
                 </p>
               </div>
@@ -58,51 +58,51 @@ export default function PricingSection({ plans }: PricingSectionProps) {
                   </span>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-blue-50 text-blue-700">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
                     {plan.personalAccounts} cuentas
                   </span>
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                     {plan.patientLimit} pacientes
                   </span>
                 </div>
               </div>
 
-              <ul className="space-y-3.5 mb-8 flex-grow text-sm text-slate-600">
+              <ul className="space-y-3 mb-8 flex-grow text-sm text-slate-600">
                 {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <svg
-                      className="w-5 h-5 text-blue-600 mr-2.5 flex-shrink-0 mt-0.5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    <span>{feature}</span>
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2.5}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <span className="leading-tight">{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-auto">
-                <a
-                  href={plan.paypalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <div className="mt-auto pt-2">
+                <Link
+                  href={`/registro?plan_id=${plan.paypalPlanId}`}
                   data-testid={`btn-contratar-${plan.id}`}
-                  className={`w-full inline-flex items-center justify-center px-6 py-3.5 rounded-xl font-semibold text-sm transition-all shadow-sm ${
+                  className={`w-full inline-flex items-center justify-center px-6 py-4 rounded-xl font-semibold text-sm transition-all duration-200 group ${
                     plan.popular
-                      ? "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-600/30"
-                      : "bg-slate-900 text-white hover:bg-slate-800"
+                      ? "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40"
+                      : "bg-slate-900 text-white hover:bg-slate-800 shadow-md hover:shadow-lg"
                   }`}
                 >
-                  Contratar
+                  <span>Contratar</span>
                   <svg
-                    className="w-4 h-4 ml-2"
+                    className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -114,16 +114,16 @@ export default function PricingSection({ plans }: PricingSectionProps) {
                       d="M14 5l7 7m0 0l-7 7m7-7H3"
                     />
                   </svg>
-                </a>
+                </Link>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-14 p-6 rounded-2xl bg-white border border-slate-200 text-center max-w-2xl mx-auto shadow-sm">
+        <div className="mt-16 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/80 text-center max-w-2xl mx-auto shadow-sm">
           <p className="text-sm text-slate-600">
-            ¿Necesitas una implementación a la medida para un consorcio hospitalario?{" "}
-            <a href="#contacto" className="text-blue-600 font-semibold hover:underline">
+            ¿Requieres un esquema a medida para una red hospitalaria?{" "}
+            <a href="#contacto" className="text-blue-600 font-bold hover:underline">
               Habla con un asesor de VITALIA Enterprise
             </a>
           </p>
