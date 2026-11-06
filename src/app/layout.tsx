@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "VITALIA - Plataforma Integral de Gestión Clínica SaaS",
+  title: "VITALIA - Gestión Clínica Inteligente",
   description:
-    "Solución Multi-Tenant para clínicas y centros médicos. Gestión de expedientes, inventario, notificaciones en tiempo real y asistente IA con integración directa a PayPal.",
+    "Software integral para consultorios, clínicas y centros médicos. Agenda, expedientes de pacientes, inventario de medicamentos y recetas en un solo lugar.",
 };
 
 export default function RootLayout({

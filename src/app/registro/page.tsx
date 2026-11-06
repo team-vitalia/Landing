@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { getPaypalBaseUrl, getPlans } from "@/data/plans";
 import { redirigirA } from "@/utils/navigation";
@@ -75,10 +76,17 @@ function RegistroContent() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-              V
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-teal-50 border border-teal-100 p-1">
+              <Image
+                src="/logo.png"
+                alt="Vitalia"
+                width={36}
+                height={36}
+                priority
+                className="w-full h-full object-contain"
+              />
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900">
               VITALIA
@@ -87,7 +95,7 @@ function RegistroContent() {
 
           <Link
             href="/#planes"
-            className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+            className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
           >
             ← Cambiar Plan
           </Link>
@@ -98,7 +106,7 @@ function RegistroContent() {
         <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-7 bg-white rounded-3xl p-8 sm:p-10 border border-slate-200 shadow-xl shadow-slate-200/50">
             <div className="mb-8">
-              <span className="text-xs font-bold text-blue-600 tracking-wider uppercase bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              <span className="text-xs font-bold text-teal-800 tracking-wider uppercase bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
                 Paso 1 de 2: Alta de Cuenta
               </span>
               <h1 className="mt-3 text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -134,10 +142,10 @@ function RegistroContent() {
                   name="nombre_clinica"
                   type="text"
                   required
-                  placeholder="Ej. Clínica Médica Santa Fe"
+                  placeholder="Ej. Consultorio Médico San Rafael"
                   value={nombreClinica}
                   onChange={(e) => setNombreClinica(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-sm transition-all"
                 />
               </div>
 
@@ -153,10 +161,10 @@ function RegistroContent() {
                   name="nombre_admin"
                   type="text"
                   required
-                  placeholder="Ej. Dr. Roberto Gómez Bolaños"
+                  placeholder="Ej. Dr. Alejandro Morales"
                   value={nombreAdmin}
                   onChange={(e) => setNombreAdmin(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-sm transition-all"
                 />
               </div>
 
@@ -175,7 +183,7 @@ function RegistroContent() {
                   placeholder="admin@tuclinica.com"
                   value={correo}
                   onChange={(e) => setCorreo(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-sm transition-all"
                 />
               </div>
 
@@ -194,7 +202,7 @@ function RegistroContent() {
                   placeholder="••••••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-sm transition-all"
                 />
               </div>
 
@@ -202,7 +210,7 @@ function RegistroContent() {
                 type="submit"
                 disabled={cargando}
                 data-testid="btn-submit-registro"
-                className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-blue-600 text-white font-semibold text-base hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 transition-all shadow-lg shadow-blue-600/25"
+                className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-teal-700 text-white font-semibold text-base hover:bg-teal-800 active:bg-teal-900 disabled:opacity-50 transition-all shadow-lg shadow-teal-700/25"
               >
                 {cargando ? (
                   <span className="flex items-center gap-2">
@@ -251,13 +259,13 @@ function RegistroContent() {
                 <svg className="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <span>Conexión cifrada de 256 bits y protección contra fraude.</span>
+                <span>Activación directa y cobro recurrente seguro con PayPal.</span>
               </div>
             </form>
           </div>
 
           <div className="lg:col-span-5 bg-gradient-to-b from-slate-900 to-slate-950 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-400">
               Resumen de la Suscripción
             </span>
             <div className="mt-3 flex items-baseline justify-between border-b border-slate-800 pb-5">
@@ -288,7 +296,7 @@ function RegistroContent() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-slate-400">Plan ID PayPal</span>
-                <span className="font-mono text-xs text-blue-300">{selectedPlan.paypalPlanId}</span>
+                <span className="font-mono text-xs text-teal-300">{selectedPlan.paypalPlanId}</span>
               </div>
             </div>
 
@@ -309,14 +317,14 @@ function RegistroContent() {
             </div>
 
             <div className="pt-4 border-t border-slate-800/80 text-xs text-slate-400 leading-relaxed">
-              Al hacer clic en Continuar, serás transferido al portal oficial de PayPal para autorizar el cargo. Tu clínica y accesos se activarán en cuanto el pago sea confirmado por Webhook.
+              Al hacer clic en Continuar, serás transferido al portal de PayPal para autorizar tu suscripción. Tu clínica se activará de forma automática en cuanto el pago sea confirmado.
             </div>
           </div>
         </div>
       </main>
 
       <footer className="py-6 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
-        © 2026 VITALIA Healthcare SaaS. Todos los derechos reservados.
+        © 2026 VITALIA. Todos los derechos reservados.
       </footer>
     </div>
   );

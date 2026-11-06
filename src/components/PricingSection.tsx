@@ -13,14 +13,14 @@ export default function PricingSection({ plans }: PricingSectionProps) {
     <section id="planes" className="py-24 bg-gradient-to-b from-white via-slate-50 to-slate-100 border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 tracking-wide uppercase">
-            Suscripciones Flexibles
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-800 border border-teal-200 tracking-wide uppercase">
+            Planes Transparentes
           </span>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
-            Planes adaptados al tamaño de tu clínica
+            Elige el plan ideal para tu clínica
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            Inicia tu transformación digital con la infraestructura SaaS adecuada. Sin plazos forzosos, con activación automática vía PayPal.
+            Sin plazos forzosos ni comisiones ocultas. Selecciona el paquete que mejor se adapte a tu equipo e inicia en minutos con activación segura vía PayPal.
           </p>
         </div>
 
@@ -31,12 +31,12 @@ export default function PricingSection({ plans }: PricingSectionProps) {
               data-testid="plan-card"
               className={`relative flex flex-col rounded-3xl p-8 bg-white transition-all duration-300 ${
                 plan.popular
-                  ? "border-2 border-blue-600 shadow-2xl shadow-blue-600/15 ring-4 ring-blue-600/5 lg:-translate-y-2.5 z-10"
-                  : "border border-slate-200/90 shadow-sm hover:border-blue-300 hover:shadow-xl hover:shadow-slate-200/50"
+                  ? "border-2 border-teal-600 shadow-2xl shadow-teal-900/10 ring-4 ring-teal-600/10 lg:-translate-y-2.5 z-10"
+                  : "border border-slate-200/90 shadow-sm hover:border-teal-300 hover:shadow-xl hover:shadow-slate-200/50"
               }`}
             >
               {plan.popular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold tracking-wider uppercase shadow-md shadow-blue-500/25">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 text-white text-xs font-bold tracking-wider uppercase shadow-md shadow-teal-700/25">
                   Más Popular
                 </div>
               )}
@@ -58,7 +58,7 @@ export default function PricingSection({ plans }: PricingSectionProps) {
                   </span>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-teal-50 text-teal-800 border border-teal-100">
                     {plan.personalAccounts} cuentas
                   </span>
                   <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
@@ -70,7 +70,7 @@ export default function PricingSection({ plans }: PricingSectionProps) {
               <ul className="space-y-3 mb-8 flex-grow text-sm text-slate-600">
                 {plan.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-5 h-5 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <svg
                         className="w-3.5 h-3.5"
                         fill="none"
@@ -96,13 +96,13 @@ export default function PricingSection({ plans }: PricingSectionProps) {
                   data-testid={`btn-contratar-${plan.id}`}
                   className={`w-full inline-flex items-center justify-center px-6 py-4 rounded-xl font-semibold text-sm transition-all duration-200 group ${
                     plan.popular
-                      ? "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-600/30 hover:shadow-xl hover:shadow-blue-600/40"
+                      ? "bg-teal-700 text-white hover:bg-teal-800 shadow-lg shadow-teal-700/30 hover:shadow-xl hover:shadow-teal-700/40"
                       : "bg-slate-900 text-white hover:bg-slate-800 shadow-md hover:shadow-lg"
                   }`}
                 >
-                  <span>Contratar</span>
+                  Contratar Plan
                   <svg
-                    className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+                    className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -118,15 +118,6 @@ export default function PricingSection({ plans }: PricingSectionProps) {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-16 p-6 sm:p-8 rounded-3xl bg-white border border-slate-200/80 text-center max-w-2xl mx-auto shadow-sm">
-          <p className="text-sm text-slate-600">
-            ¿Requieres un esquema a medida para una red hospitalaria?{" "}
-            <a href="#contacto" className="text-blue-600 font-bold hover:underline">
-              Habla con un asesor de VITALIA Enterprise
-            </a>
-          </p>
         </div>
       </div>
     </section>

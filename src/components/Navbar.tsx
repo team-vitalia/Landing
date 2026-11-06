@@ -1,56 +1,71 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-blue-500/20">
-              V
+        <div className="flex items-center justify-between h-20">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="relative w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-xl bg-teal-50 border border-teal-100 p-1">
+              <Image
+                src="/logo.png"
+                alt="Vitalia"
+                width={40}
+                height={40}
+                priority
+                className="w-full h-full object-contain"
+              />
             </div>
-            <div>
-              <span className="text-xl font-bold tracking-tight text-slate-900">
+            <div className="flex flex-col">
+              <span className="text-xl font-bold tracking-tight text-slate-900 leading-tight">
                 VITALIA
               </span>
-              <span className="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                SaaS Clínico
+              <span className="text-xs text-teal-700 font-medium">
+                Gestión Clínica
               </span>
             </div>
-          </div>
+          </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            <a
-              href="#caracteristicas"
-              className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+            <Link
+              href="/#caracteristicas"
+              className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
             >
               Características
-            </a>
-            <a
-              href="#planes"
-              className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+            </Link>
+            <Link
+              href="/#planes"
+              className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
             >
               Planes y Precios
-            </a>
-            <a
-              href="#seguridad"
-              className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+            </Link>
+            <Link
+              href="/privacidad"
+              className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
             >
-              Multi-Tenant
-            </a>
+              Aviso de Privacidad
+            </Link>
+            <Link
+              href="/terminos"
+              className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
+            >
+              Términos
+            </Link>
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <a
-              href="#planes"
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/30"
+            <Link
+              href="/#planes"
+              className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold rounded-xl bg-teal-700 text-white hover:bg-teal-800 transition-all shadow-sm shadow-teal-700/25"
             >
               Comenzar Ahora
-            </a>
+            </Link>
           </div>
 
           <div className="flex md:hidden">
@@ -88,35 +103,44 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-4 space-y-3">
-          <a
-            href="#caracteristicas"
+        <div className="md:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-5 space-y-3">
+          <Link
+            href="/#caracteristicas"
             onClick={() => setMenuOpen(false)}
-            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-teal-700"
           >
             Características
-          </a>
-          <a
-            href="#planes"
+          </Link>
+          <Link
+            href="/#planes"
             onClick={() => setMenuOpen(false)}
-            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-teal-700"
           >
             Planes y Precios
-          </a>
-          <a
-            href="#seguridad"
+          </Link>
+          <Link
+            href="/privacidad"
             onClick={() => setMenuOpen(false)}
-            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-teal-700"
           >
-            Multi-Tenant
-          </a>
-          <a
-            href="#planes"
+            Aviso de Privacidad
+          </Link>
+          <Link
+            href="/terminos"
             onClick={() => setMenuOpen(false)}
-            className="block w-full text-center px-4 py-2.5 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-teal-700"
           >
-            Comenzar Ahora
-          </a>
+            Términos y Condiciones
+          </Link>
+          <div className="pt-2">
+            <Link
+              href="/#planes"
+              onClick={() => setMenuOpen(false)}
+              className="w-full inline-flex items-center justify-center px-4 py-3 text-sm font-semibold rounded-xl bg-teal-700 text-white hover:bg-teal-800 shadow-sm"
+            >
+              Comenzar Ahora
+            </Link>
+          </div>
         </div>
       )}
     </header>

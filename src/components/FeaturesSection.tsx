@@ -3,11 +3,11 @@ export default function FeaturesSection() {
     {
       title: "Gestión de expedientes",
       description:
-        "Historias clínicas digitales completas, registro de signos vitales, antecedentes patológicos, recetas electrónicas y trazabilidad de consultas por médico.",
-      badge: "Clínico",
+        "Historias clínicas completas, antecedentes del paciente, registro de signos vitales, recetas electrónicas y notas de evolución accesibles al instante durante la consulta.",
+      badge: "Expediente Digital",
       icon: (
         <svg
-          className="w-6 h-6 text-blue-600"
+          className="w-6 h-6 text-teal-700"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -24,11 +24,11 @@ export default function FeaturesSection() {
     {
       title: "Control de inventario",
       description:
-        "Monitoreo centralizado de almacén, existencias mínimas de medicamentos, control de lotes y fechas de caducidad para evitar desabasto en tu farmacia.",
-      badge: "Operativo",
+        "Monitoreo claro de existencias de medicamentos, alertas automáticas de caducidad y abastecimiento de insumos para que a tu farmacia o consultorio nunca le falte nada.",
+      badge: "Farmacia y Stock",
       icon: (
         <svg
-          className="w-6 h-6 text-blue-600"
+          className="w-6 h-6 text-teal-700"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -45,11 +45,11 @@ export default function FeaturesSection() {
     {
       title: "Notificaciones en tiempo real",
       description:
-        "Comunicación activa vía WebSockets y correos automáticos para confirmación de citas, cambios de sala y avisos urgentes entre recepción y especialistas.",
-      badge: "Conectividad",
+        "Confirmación automática de citas por correo, avisos de llamada a pacientes en sala de espera y coordinación fluida entre médicos y personal de recepción.",
+      badge: "Agenda y Avisos",
       icon: (
         <svg
-          className="w-6 h-6 text-blue-600"
+          className="w-6 h-6 text-teal-700"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -66,11 +66,11 @@ export default function FeaturesSection() {
     {
       title: "Asistente IA",
       description:
-        "Inteligencia Artificial integrada para soporte en la toma de decisiones clínicas, sugerencias diagnósticas y validación de interacciones farmacológicas.",
-      badge: "Innovación",
+        "Ayuda inteligente para resumir historiales médicos, sugerir diagnósticos diferenciales y revisar posibles contraindicaciones farmacológicas en cuestión de segundos.",
+      badge: "Inteligencia Médica",
       icon: (
         <svg
-          className="w-6 h-6 text-blue-600"
+          className="w-6 h-6 text-teal-700"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -90,15 +90,14 @@ export default function FeaturesSection() {
     <section id="caracteristicas" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-sm font-bold tracking-wider text-blue-600 uppercase">
-            Capacidades de Vanguardia
+          <span className="text-xs font-bold tracking-wider text-teal-700 uppercase bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">
+            Todo lo que tu clínica necesita
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Diseñado exclusivamente para el flujo de trabajo clínico
+          <h2 className="mt-4 text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Herramientas pensadas para el día a día médico
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600">
-            Cada módulo de VITALIA está optimizado para agilizar la labor de médicos,
-            enfermeros y personal administrativo mientras mantiene el estricto aislamiento de datos.
+            Diseñamos cada función para que doctores, asistentes y recepcionistas ahorren tiempo valioso y puedan brindar la mejor atención a sus pacientes.
           </p>
         </div>
 
@@ -106,10 +105,10 @@ export default function FeaturesSection() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="flex flex-col p-6 rounded-2xl bg-slate-50/80 border border-slate-200/80 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-500/5 transition-all group"
+              className="flex flex-col p-7 rounded-2xl bg-slate-50/70 border border-slate-200/90 hover:border-teal-300 hover:shadow-xl hover:shadow-teal-900/5 transition-all group"
             >
               <div className="flex items-center justify-between mb-5">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                   {feature.icon}
                 </div>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-200/60 text-slate-700">
