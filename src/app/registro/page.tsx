@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { toast } from "gooey-toast";
 import { getPlans } from "@/data/plans";
 import { PayPalSubscriptionButton } from "@/components/PayPalSubscriptionButton";
 import { ENV } from "@/config/env";
@@ -11,6 +12,13 @@ import { ENV } from "@/config/env";
 function RegistroContent() {
   const searchParams = useSearchParams();
   const planIdParam = searchParams.get("plan_id") || "";
+  const clinicaIdParam = searchParams.get("clinica_id") || "";
+  const correoParam = searchParams.get("correo") || "";
+  const nombreClinicaParam = searchParams.get("nombre_clinica") || "";
+  const nombreAdminParam = searchParams.get("nombre_admin") || "";
+  const modoParam = searchParams.get("modo") || "";
+
+  const esModoUpgrade = modoParam === "upgrade" || Boolean(clinicaIdParam);
 
   const allPlans = getPlans();
   const selectedPlan =
@@ -31,12 +39,49 @@ function RegistroContent() {
 
   const apiUrl = ENV.API_URL;
 
+  const mostrarErrorToast = (mensaje: string) => {
+    setErrorMensaje(mensaje);
+    try {
+      toast.error({
+        title: "Atención",
+        description: mensaje,
+        duration: 5000,
+      });
+    } catch {}
+  };
+
+  const mostrarExitoToast = (titulo: string, mensaje: string) => {
+    setMensajeExito(mensaje);
+    try {
+      toast.success({
+        title: titulo,
+        description: mensaje,
+        duration: 5000,
+      });
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (nombreClinicaParam) setNombreClinica(nombreClinicaParam);
+    if (nombreAdminParam) setNombreAdmin(nombreAdminParam);
+    if (correoParam) setCorreo(correoParam);
+    if (clinicaIdParam) setClinicaIdRegistrada(parseInt(clinicaIdParam, 10));
+
+    if (esModoUpgrade) {
+      setPaso(2);
+      mostrarExitoToast(
+        "Actualización Verificada",
+        `Tu clínica (${nombreClinicaParam || "actual"}) está lista para activar el nuevo plan.`
+      );
+    }
+  }, [clinicaIdParam, correoParam, esModoUpgrade, nombreAdminParam, nombreClinicaParam]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMensaje(null);
 
     if (!nombreClinica.trim() || !nombreAdmin.trim() || !correo.trim() || !password.trim()) {
-      setErrorMensaje("Todos los campos son obligatorios.");
+      mostrarErrorToast("Todos los campos son obligatorios.");
       return;
     }
 
@@ -66,11 +111,11 @@ function RegistroContent() {
 
       const datos = await respuesta.json();
       setClinicaIdRegistrada(datos.clinica_id);
-      setMensajeExito(datos.mensaje || "Datos validados correctamente.");
+      mostrarExitoToast("Pre-registro Exitoso", datos.mensaje || "Datos validados correctamente.");
       setPaso(2);
     } catch (err: any) {
       console.error("Error en pre-registro:", err.message);
-      setErrorMensaje(err.message || "Error al conectar con el servidor.");
+      mostrarErrorToast(err.message || "Error al conectar con el servidor.");
     } finally {
       setCargando(false);
     }
@@ -81,6 +126,25 @@ function RegistroContent() {
     setCargando(true);
     setErrorMensaje(null);
 
+    const clinicaIdEfectivo =
+      clinicaIdRegistrada ||
+      (clinicaIdParam ? parseInt(clinicaIdParam, 10) : undefined);
+
+    const correoEfectivo =
+      correo.trim().toLowerCase() ||
+      correoParam.trim().toLowerCase() ||
+      undefined;
+
+    const nombreClinicaEfectivo =
+      nombreClinica.trim() ||
+      nombreClinicaParam.trim() ||
+      undefined;
+
+    const nombreAdminEfectivo =
+      nombreAdmin.trim() ||
+      nombreAdminParam.trim() ||
+      undefined;
+
     try {
       const res = await fetch(`${apiUrl}/api/suscripciones/confirmar`, {
         method: "POST",
@@ -89,9 +153,11 @@ function RegistroContent() {
         },
         body: JSON.stringify({
           subscription_id: subscriptionId,
-          clinica_id: clinicaIdRegistrada,
+          clinica_id: clinicaIdEfectivo,
           paypal_plan_id: selectedPlan.paypalPlanId,
-          correo: correo.trim().toLowerCase() || undefined,
+          correo: correoEfectivo,
+          nombre_clinica: nombreClinicaEfectivo,
+          nombre_admin: nombreAdminEfectivo,
         }),
       });
 
@@ -100,15 +166,19 @@ function RegistroContent() {
         throw new Error(errJson.detail || "Error al confirmar la suscripción en el servidor.");
       }
 
+      mostrarExitoToast(
+        "Suscripción Confirmada",
+        `Tu plan ${selectedPlan.name} ha sido activado exitosamente.`
+      );
       setPaso(3);
     } catch (err: any) {
       console.error("Error al confirmar suscripción:", err);
-      setErrorMensaje(
+      const msg =
         "El pago fue aprobado por PayPal (ID: " +
-          subscriptionId +
-          "), pero hubo un problema al sincronizar con el servidor: " +
-          err.message
-      );
+        subscriptionId +
+        "), pero hubo un problema al sincronizar con el servidor: " +
+        err.message;
+      mostrarErrorToast(msg);
       setPaso(3);
     } finally {
       setCargando(false);
@@ -117,11 +187,11 @@ function RegistroContent() {
 
   const handlePaypalError = (err: any) => {
     console.error("Error en pasarela PayPal:", err);
-    setErrorMensaje("Ocurrió un error al procesar el pago con PayPal. Intenta de nuevo.");
+    mostrarErrorToast("Ocurrió un error al procesar el pago con PayPal. Intenta de nuevo.");
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-between" suppressHydrationWarning>
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
@@ -169,13 +239,9 @@ function RegistroContent() {
                 {errorMensaje && (
                   <div
                     data-testid="error-banner"
-                    className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-3"
-                  >
-                    <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{errorMensaje}</span>
-                  </div>
+                    className="sr-only"
+                    aria-live="assertive"
+                  />
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-5" data-testid="formulario-registro">
@@ -296,30 +362,24 @@ function RegistroContent() {
               <div>
                 <div className="mb-6">
                   <span className="text-xs font-bold text-teal-800 tracking-wider uppercase bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
-                    Paso 2 de 2: Autorizar Suscripción
+                    {esModoUpgrade ? "Actualización de Plan" : "Paso 2 de 2: Autorizar Suscripción"}
                   </span>
                   <h1 className="mt-3 text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                    Pago Integrado con PayPal
+                    {esModoUpgrade ? `Mejora al Plan ${selectedPlan.name}` : "Pago Integrado con PayPal"}
                   </h1>
                   <p className="mt-2 text-sm text-slate-500">
-                    Haz clic en el botón oficial de PayPal para autorizar tu suscripción. Se abrirá una ventana emergente segura y no saldrás de este sitio.
+                    {esModoUpgrade
+                      ? `Haz clic en el botón oficial de PayPal para autorizar la actualización al Plan ${selectedPlan.name} para tu clínica. La mejora se aplicará inmediatamente a tu cuenta.`
+                      : "Haz clic en el botón oficial de PayPal para autorizar tu suscripción. Se abrirá una ventana emergente segura y no saldrás de este sitio."}
                   </p>
                 </div>
 
-                {mensajeExito && (
-                  <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3">
-                    <svg className="w-5 h-5 flex-shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span>{mensajeExito}</span>
-                  </div>
-                )}
-
                 {errorMensaje && (
-                  <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-3">
-                    <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                  <div
+                    data-testid="error-banner-paso2"
+                    className="sr-only"
+                    aria-live="assertive"
+                  >
                     <span>{errorMensaje}</span>
                   </div>
                 )}
@@ -358,13 +418,15 @@ function RegistroContent() {
                 </div>
 
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
-                  <button
-                    type="button"
-                    onClick={() => setPaso(1)}
-                    className="text-xs font-semibold text-slate-600 hover:text-slate-900"
-                  >
-                    ← Modificar datos de la cuenta
-                  </button>
+                  {!esModoUpgrade && (
+                    <button
+                      type="button"
+                      onClick={() => setPaso(1)}
+                      className="text-xs font-semibold text-slate-600 hover:text-slate-900"
+                    >
+                      ← Modificar datos de la cuenta
+                    </button>
+                  )}
                   <span className="text-xs text-slate-400">Transacción segura 256-bit SSL</span>
                 </div>
               </div>
@@ -379,15 +441,17 @@ function RegistroContent() {
                 </div>
 
                 <span className="text-xs font-bold text-emerald-800 tracking-wider uppercase bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                  Suscripción Activada
+                  {esModoUpgrade ? "Plan Actualizado" : "Suscripción Activada"}
                 </span>
 
                 <h1 className="mt-4 text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  ¡Bienvenido a VITALIA!
+                  {esModoUpgrade ? `¡Plan ${selectedPlan.name} Activado!` : "¡Bienvenido a VITALIA!"}
                 </h1>
 
                 <p className="mt-3 text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                  Tu suscripción al <strong>Plan {selectedPlan.name}</strong> ha sido confirmada con éxito y tu clínica ya se encuentra plenamente activa en la plataforma.
+                  {esModoUpgrade
+                    ? `Tu suscripción al Plan ${selectedPlan.name} ha sido confirmada con éxito para ${nombreClinica || "tu clínica"}. Ya puedes volver a tu panel para disfrutar de las nuevas capacidades.`
+                    : `Tu suscripción al Plan ${selectedPlan.name} ha sido confirmada con éxito y tu clínica ya se encuentra plenamente activa en la plataforma.`}
                 </p>
 
                 {subscriptionIdFinal && (
@@ -399,11 +463,9 @@ function RegistroContent() {
                 <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                   <a
                     href={ENV.APP_URL}
-                    target="_blank"
-                    rel="noreferrer"
                     className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-teal-700 text-white font-semibold text-sm hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
                   >
-                    Iniciar Sesión en VITALIA
+                    {esModoUpgrade ? "Volver a la Aplicación VITALIA" : "Iniciar Sesión en VITALIA"}
                   </a>
                   <Link
                     href="/"

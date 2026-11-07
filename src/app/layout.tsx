@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "gooey-toast/styles.css";
 
 export const metadata: Metadata = {
   title: "VITALIA - Gestión Clínica Inteligente",

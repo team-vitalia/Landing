@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "gooey-toast": "^0.2.2",
     "next": "16.4.5",
     "react": "19.3.0",
     "react-dom": "19.3.0"
