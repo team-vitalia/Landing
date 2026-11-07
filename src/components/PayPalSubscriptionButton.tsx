@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ENV } from "@/config/env";
 
 declare global {
   interface Window {
@@ -16,8 +17,7 @@ interface PayPalSubscriptionButtonProps {
   onError?: (error: any) => void;
 }
 
-const PAYPAL_CLIENT_ID =
-  "AQIJ1n0NzO11pUp0DDzNjCFkHqsD39gEY3XnvemKwOV_B11fWKI64PnjnaSMmT24s3sJBpxldoXwjxzy";
+const PAYPAL_CLIENT_ID = ENV.PAYPAL_CLIENT_ID;
 
 export function PayPalSubscriptionButton({
   planId,

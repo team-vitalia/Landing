@@ -1,23 +1,17 @@
 import { Plan } from "@/types/plan";
+import { ENV } from "@/config/env";
 
 export const getPaypalBaseUrl = (): string => {
-  return (
-    process.env.NEXT_PUBLIC_PAYPAL_BASE_URL ||
-    "https://www.sandbox.paypal.com/billing/plans"
-  );
+  return ENV.PAYPAL_BASE_URL;
 };
 
 export const getPlans = (): Plan[] => {
   const baseUrl = getPaypalBaseUrl();
 
-  const basicoPlanId =
-    process.env.NEXT_PUBLIC_PAYPAL_PLAN_BASICO || "P-61L31376NX417651DNLWUKSQ";
-  const clinicaPlanId =
-    process.env.NEXT_PUBLIC_PAYPAL_PLAN_CLINICA || "P-5CC29855SK5899208NLWUMWI";
-  const profesionalPlanId =
-    process.env.NEXT_PUBLIC_PAYPAL_PLAN_PROFESIONAL || "P-5J121652NS326140HNLWUNNI";
-  const empresarialPlanId =
-    process.env.NEXT_PUBLIC_PAYPAL_PLAN_EMPRESARIAL || "P-64643939B6992035JNLWUOCY";
+  const basicoPlanId = ENV.PLAN_BASICO_ID;
+  const clinicaPlanId = ENV.PLAN_CLINICA_ID;
+  const profesionalPlanId = ENV.PLAN_PROFESIONAL_ID;
+  const empresarialPlanId = ENV.PLAN_EMPRESARIAL_ID;
 
   return [
     {

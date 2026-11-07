@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { getPlans } from "@/data/plans";
 import { PayPalSubscriptionButton } from "@/components/PayPalSubscriptionButton";
+import { redirigirA } from "@/utils/navigation";
+import { ENV } from "@/config/env";
 
 function RegistroContent() {
   const searchParams = useSearchParams();
@@ -28,7 +30,7 @@ function RegistroContent() {
   const [errorMensaje, setErrorMensaje] = useState<string | null>(null);
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const apiUrl = ENV.API_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,6 +68,7 @@ function RegistroContent() {
       const datos = await respuesta.json();
       setClinicaIdRegistrada(datos.clinica_id);
       setMensajeExito(datos.mensaje || "Datos validados correctamente.");
+      redirigirA(`${selectedPlan.paypalUrl}?custom_id=${datos.clinica_id}`);
       setPaso(2);
     } catch (err: any) {
       console.error("Error en pre-registro:", err.message);
@@ -240,7 +243,7 @@ function RegistroContent() {
                       htmlFor="password"
                       className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5"
                     >
-                      Contraseña
+                      Contraseña de Acceso
                     </label>
                     <input
                       id="password"
@@ -397,7 +400,7 @@ function RegistroContent() {
 
                 <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                   <a
-                    href="http://localhost:8081"
+                    href={ENV.APP_URL}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-teal-700 text-white font-semibold text-sm hover:bg-teal-800 transition-all shadow-lg shadow-teal-700/25"
