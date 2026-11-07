@@ -21,24 +21,24 @@ export const ENV = {
   },
   get PLAN_BASICO_ID(): string {
     return (
-      process.env.NEXT_PUBLIC_PAYPAL_PLAN_BASICO?.trim() || "P-61L31376NX417651DNLWUKSQ"
+      process.env.NEXT_PUBLIC_PAYPAL_PLAN_BASICO?.trim() || "P-9JA53339DW996433FNLXJMJA"
     );
   },
   get PLAN_CLINICA_ID(): string {
     return (
-      process.env.NEXT_PUBLIC_PAYPAL_PLAN_CLINICA?.trim() || "P-5CC29855SK5899208NLWUMWI"
+      process.env.NEXT_PUBLIC_PAYPAL_PLAN_CLINICA?.trim() || "P-18S21614P2665104JNLXJNKI"
     );
   },
   get PLAN_PROFESIONAL_ID(): string {
     return (
       process.env.NEXT_PUBLIC_PAYPAL_PLAN_PROFESIONAL?.trim() ||
-      "P-5J121652NS326140HNLWUNNI"
+      "P-32342459V8640593NNLXJN7A"
     );
   },
   get PLAN_EMPRESARIAL_ID(): string {
     return (
       process.env.NEXT_PUBLIC_PAYPAL_PLAN_EMPRESARIAL?.trim() ||
-      "P-64643939B6992035JNLWUOCY"
+      "P-3BM73023B1884583RNLXJOSQ"
     );
   },
 };

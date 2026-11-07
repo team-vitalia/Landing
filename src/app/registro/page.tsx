@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { getPlans } from "@/data/plans";
 import { PayPalSubscriptionButton } from "@/components/PayPalSubscriptionButton";
-import { redirigirA } from "@/utils/navigation";
 import { ENV } from "@/config/env";
 
 function RegistroContent() {
@@ -68,7 +67,6 @@ function RegistroContent() {
       const datos = await respuesta.json();
       setClinicaIdRegistrada(datos.clinica_id);
       setMensajeExito(datos.mensaje || "Datos validados correctamente.");
-      redirigirA(`${selectedPlan.paypalUrl}?custom_id=${datos.clinica_id}`);
       setPaso(2);
     } catch (err: any) {
       console.error("Error en pre-registro:", err.message);

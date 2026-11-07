@@ -5,7 +5,7 @@ import { redirigirA } from "@/utils/navigation";
 jest.mock("next/navigation", () => ({
   useSearchParams: () => ({
     get: (param: string) =>
-      param === "plan_id" ? "P-5CC29855SK5899208NLWUMWI" : null,
+      param === "plan_id" ? "P-18S21614P2665104JNLXJNKI" : null,
   }),
 }));
 
@@ -73,12 +73,11 @@ describe("RegistroPage", () => {
     expect(parsedBody.nombre_admin).toBe("Dra. Aurora Treviño");
     expect(parsedBody.correo).toBe("aurora@centromedico.com");
     expect(parsedBody.password).toBe("PasswordSegura789!");
-    expect(parsedBody.paypal_plan_id).toBe("P-5CC29855SK5899208NLWUMWI");
+    expect(parsedBody.paypal_plan_id).toBe("P-18S21614P2665104JNLXJNKI");
 
     await waitFor(() => {
-      expect(redirigirA).toHaveBeenCalledWith(
-        "https://www.sandbox.paypal.com/billing/plans/P-5CC29855SK5899208NLWUMWI?custom_id=88"
-      );
+      expect(screen.getByText("Paso 2 de 2: Autorizar Suscripción")).toBeInTheDocument();
+      expect(screen.getByText("Pago Integrado con PayPal")).toBeInTheDocument();
     });
   });
 

@@ -8,10 +8,10 @@ describe("PricingSection", () => {
     jest.resetModules();
     process.env = {
       ...originalEnv,
-      NEXT_PUBLIC_PAYPAL_PLAN_BASICO: "P-61L31376NX417651DNLWUKSQ",
-      NEXT_PUBLIC_PAYPAL_PLAN_CLINICA: "P-5CC29855SK5899208NLWUMWI",
-      NEXT_PUBLIC_PAYPAL_PLAN_PROFESIONAL: "P-5J121652NS326140HNLWUNNI",
-      NEXT_PUBLIC_PAYPAL_PLAN_EMPRESARIAL: "P-64643939B6992035JNLWUOCY",
+      NEXT_PUBLIC_PAYPAL_PLAN_BASICO: "P-9JA53339DW996433FNLXJMJA",
+      NEXT_PUBLIC_PAYPAL_PLAN_CLINICA: "P-18S21614P2665104JNLXJNKI",
+      NEXT_PUBLIC_PAYPAL_PLAN_PROFESIONAL: "P-32342459V8640593NNLXJN7A",
+      NEXT_PUBLIC_PAYPAL_PLAN_EMPRESARIAL: "P-3BM73023B1884583RNLXJOSQ",
     };
   });
 
@@ -39,10 +39,10 @@ describe("PricingSection", () => {
     const btnProfesional = screen.getByTestId("btn-contratar-profesional");
     const btnEmpresarial = screen.getByTestId("btn-contratar-empresarial");
 
-    expect(btnBasico).toHaveAttribute("href", "/registro?plan_id=P-61L31376NX417651DNLWUKSQ");
-    expect(btnClinica).toHaveAttribute("href", "/registro?plan_id=P-5CC29855SK5899208NLWUMWI");
-    expect(btnProfesional).toHaveAttribute("href", "/registro?plan_id=P-5J121652NS326140HNLWUNNI");
-    expect(btnEmpresarial).toHaveAttribute("href", "/registro?plan_id=P-64643939B6992035JNLWUOCY");
+    expect(btnBasico).toHaveAttribute("href", "/registro?plan_id=P-9JA53339DW996433FNLXJMJA");
+    expect(btnClinica).toHaveAttribute("href", "/registro?plan_id=P-18S21614P2665104JNLXJNKI");
+    expect(btnProfesional).toHaveAttribute("href", "/registro?plan_id=P-32342459V8640593NNLXJN7A");
+    expect(btnEmpresarial).toHaveAttribute("href", "/registro?plan_id=P-3BM73023B1884583RNLXJOSQ");
   });
 
   test("renderiza los limites de cuentas y pacientes requeridos para cada plan", () => {
