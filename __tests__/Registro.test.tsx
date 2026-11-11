@@ -30,8 +30,34 @@ describe("RegistroPage", () => {
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Correo Electrónico")).toBeInTheDocument();
     expect(screen.getByLabelText("Contraseña de Acceso")).toBeInTheDocument();
+    expect(screen.getByLabelText("Confirmar Contraseña")).toBeInTheDocument();
+    expect(screen.getByTestId("btn-registro-google")).toBeInTheDocument();
     expect(screen.getByTestId("btn-submit-registro")).toBeInTheDocument();
     expect(screen.getByText("Plan Clínica")).toBeInTheDocument();
+  });
+
+  test("bloquea el boton si las contrasenas no coinciden", () => {
+    render(<RegistroPage />);
+
+    fireEvent.change(screen.getByLabelText("Nombre Comercial de la Clínica"), {
+      target: { value: "Centro Médico Aurora" },
+    });
+    fireEvent.change(screen.getByLabelText("Nombre del Administrador"), {
+      target: { value: "Dra. Aurora Treviño" },
+    });
+    fireEvent.change(screen.getByLabelText("Correo Electrónico"), {
+      target: { value: "aurora@centromedico.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Contraseña de Acceso"), {
+      target: { value: "Password123!" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirmar Contraseña"), {
+      target: { value: "PasswordDiferente!" },
+    });
+
+    const boton = screen.getByTestId("btn-submit-registro");
+    expect(boton).toBeDisabled();
+    expect(screen.getByText("Las contraseñas no coinciden.")).toBeInTheDocument();
   });
 
   test("captura los datos, llama al endpoint de pre-registro y redirige a PayPal con custom_id", async () => {
@@ -57,8 +83,13 @@ describe("RegistroPage", () => {
     fireEvent.change(screen.getByLabelText("Contraseña de Acceso"), {
       target: { value: "PasswordSegura789!" },
     });
+    fireEvent.change(screen.getByLabelText("Confirmar Contraseña"), {
+      target: { value: "PasswordSegura789!" },
+    });
 
-    fireEvent.click(screen.getByTestId("btn-submit-registro"));
+    const boton = screen.getByTestId("btn-submit-registro");
+    expect(boton).not.toBeDisabled();
+    fireEvent.click(boton);
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledTimes(1);
@@ -101,6 +132,9 @@ describe("RegistroPage", () => {
       target: { value: "existente@vitalia.com" },
     });
     fireEvent.change(screen.getByLabelText("Contraseña de Acceso"), {
+      target: { value: "Pass12345!" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirmar Contraseña"), {
       target: { value: "Pass12345!" },
     });
 

@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Script from "next/script";
 import { useSearchParams } from "next/navigation";
 import { toast } from "gooey-toast";
 import { getPlans } from "@/data/plans";
@@ -31,6 +32,11 @@ function RegistroContent() {
   const [nombreAdmin, setNombreAdmin] = useState("");
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [verPassword, setVerPassword] = useState(false);
+  const [verConfirmPassword, setVerConfirmPassword] = useState(false);
+  const [esGoogle, setEsGoogle] = useState(false);
+  const [googleToken, setGoogleToken] = useState<string | null>(null);
   const [clinicaIdRegistrada, setClinicaIdRegistrada] = useState<number | null>(null);
   const [subscriptionIdFinal, setSubscriptionIdFinal] = useState<string>("");
   const [cargando, setCargando] = useState(false);
@@ -38,6 +44,7 @@ function RegistroContent() {
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
 
   const apiUrl = ENV.API_URL;
+  const googleClientId = ENV.GOOGLE_CLIENT_ID;
 
   const mostrarErrorToast = (mensaje: string) => {
     setErrorMensaje(mensaje);
@@ -76,13 +83,139 @@ function RegistroContent() {
     }
   }, [clinicaIdParam, correoParam, esModoUpgrade, nombreAdminParam, nombreClinicaParam]);
 
+  const procesarCredentialGoogle = (cred: string) => {
+    try {
+      const base64Url = cred.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      const data = JSON.parse(jsonPayload);
+      const email = data.email || "";
+      const name = data.name || `${data.given_name || ""} ${data.family_name || ""}`.trim() || "";
+
+      setEsGoogle(true);
+      setGoogleToken(cred);
+      if (email) setCorreo(email);
+      if (name) setNombreAdmin(name);
+      setPassword("");
+      setConfirmPassword("");
+      mostrarExitoToast("Cuenta de Google vinculada", `Identificado como ${email}. Asigna el nombre comercial de tu clínica.`);
+    } catch (e: any) {
+      mostrarErrorToast("No se pudo procesar la respuesta de Google.");
+    }
+  };
+
+  const handleGoogleClick = () => {
+    if (typeof window === "undefined") return;
+
+    const g = (window as any).google;
+    if (g?.accounts?.id) {
+      try {
+        g.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: (response: any) => {
+            if (response?.credential) {
+              procesarCredentialGoogle(response.credential);
+            }
+          },
+        });
+        g.accounts.id.prompt((notification: any) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            try {
+              const tokenClient = g.accounts.oauth2.initTokenClient({
+                client_id: googleClientId,
+                scope: "openid profile email",
+                error_callback: () => {
+                  mostrarErrorToast(
+                    "Google no pudo autorizar este origen. Puedes completar el registro usando el formulario tradicional."
+                  );
+                },
+                callback: async (resp: any) => {
+                  if (resp?.access_token) {
+                    try {
+                      const uRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+                        headers: { Authorization: `Bearer ${resp.access_token}` },
+                      });
+                      if (uRes.ok) {
+                        const uData = await uRes.json();
+                        setEsGoogle(true);
+                        setGoogleToken(resp.access_token);
+                        if (uData.email) setCorreo(uData.email);
+                        if (uData.name) setNombreAdmin(uData.name);
+                        setPassword("");
+                        setConfirmPassword("");
+                        mostrarExitoToast("Cuenta de Google vinculada", `Identificado como ${uData.email}.`);
+                      }
+                    } catch {
+                      mostrarErrorToast("Error al obtener información de Google.");
+                    }
+                  }
+                },
+              });
+              tokenClient.requestAccessToken();
+            } catch {
+              mostrarErrorToast(
+                "No se pudo iniciar el selector de Google. Puedes continuar con el formulario manual."
+              );
+            }
+          }
+        });
+      } catch {
+        mostrarErrorToast(
+          "Error al inicializar el servicio de Google. Por favor, llena el formulario manual."
+        );
+      }
+    } else {
+      mostrarErrorToast("El servicio de Google aún se está cargando. Por favor, intenta de nuevo.");
+    }
+  };
+
+  const cancelarGoogle = () => {
+    setEsGoogle(false);
+    setGoogleToken(null);
+    setCorreo("");
+    setNombreAdmin("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+
+  const passwordsCoinciden = esGoogle || (password.length > 0 && password === confirmPassword);
+  const formularioValido = esGoogle
+    ? Boolean(nombreClinica.trim() && nombreAdmin.trim() && correo.trim())
+    : Boolean(
+        nombreClinica.trim() &&
+        nombreAdmin.trim() &&
+        correo.trim() &&
+        password &&
+        confirmPassword &&
+        password === confirmPassword
+      );
+
+  const botonBloqueado = cargando || !formularioValido;
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMensaje(null);
 
-    if (!nombreClinica.trim() || !nombreAdmin.trim() || !correo.trim() || !password.trim()) {
-      mostrarErrorToast("Todos los campos son obligatorios.");
-      return;
+    if (esGoogle) {
+      if (!nombreClinica.trim() || !nombreAdmin.trim() || !correo.trim()) {
+        mostrarErrorToast("El nombre de la clínica, el nombre del administrador y el correo son obligatorios.");
+        return;
+      }
+    } else {
+      if (!nombreClinica.trim() || !nombreAdmin.trim() || !correo.trim() || !password.trim() || !confirmPassword.trim()) {
+        mostrarErrorToast("Todos los campos son obligatorios.");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        mostrarErrorToast("Las contraseñas no coinciden.");
+        return;
+      }
     }
 
     setCargando(true);
@@ -97,8 +230,10 @@ function RegistroContent() {
           nombre_clinica: nombreClinica.trim(),
           nombre_admin: nombreAdmin.trim(),
           correo: correo.trim().toLowerCase(),
-          password: password,
+          password: esGoogle ? undefined : password,
           paypal_plan_id: selectedPlan.paypalPlanId,
+          auth_provider: esGoogle ? "google" : "manual",
+          google_token: googleToken,
         }),
       });
 
@@ -158,6 +293,8 @@ function RegistroContent() {
           correo: correoEfectivo,
           nombre_clinica: nombreClinicaEfectivo,
           nombre_admin: nombreAdminEfectivo,
+          modo: esModoUpgrade ? "upgrade" : "registro",
+          es_upgrade: esModoUpgrade,
         }),
       });
 
@@ -192,6 +329,8 @@ function RegistroContent() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between" suppressHydrationWarning>
+      <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
+
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
@@ -242,6 +381,72 @@ function RegistroContent() {
                     className="sr-only"
                     aria-live="assertive"
                   />
+                )}
+
+                {!esGoogle && (
+                  <div className="mb-6">
+                    <button
+                      type="button"
+                      onClick={handleGoogleClick}
+                      data-testid="btn-registro-google"
+                      className="w-full flex items-center justify-center gap-3 px-4 py-3.5 border border-slate-300 rounded-xl bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 text-sm font-semibold transition-all shadow-sm hover:shadow"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                          fill="#4285F4"
+                          d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+                        />
+                        <path
+                          fill="#EA4335"
+                          d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                        />
+                      </svg>
+                      <span>Registro con Google</span>
+                    </button>
+                    <div className="relative my-4 flex items-center justify-center">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-200" />
+                      </div>
+                      <span className="relative bg-white px-3 text-xs uppercase tracking-wider text-slate-400">
+                        o completa el registro manual
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {esGoogle && (
+                  <div className="mb-6 p-4 rounded-2xl bg-teal-50 border border-teal-200 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-teal-100 flex items-center justify-center text-teal-700">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-teal-900 uppercase tracking-wider">
+                          Registro con Google autorizado
+                        </p>
+                        <p className="text-xs text-teal-700">
+                          {correo}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={cancelarGoogle}
+                      className="text-xs font-semibold text-slate-500 hover:text-slate-800 underline"
+                    >
+                      Usar otro correo
+                    </button>
+                  </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-5" data-testid="formulario-registro">
@@ -295,37 +500,110 @@ function RegistroContent() {
                       name="correo"
                       type="email"
                       required
+                      readOnly={esGoogle}
                       placeholder="admin@tuclinica.com"
                       value={correo}
                       onChange={(e) => setCorreo(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-sm transition-all"
+                      className={`w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-sm transition-all ${
+                        esGoogle ? "bg-slate-100 text-slate-500 cursor-not-allowed" : ""
+                      }`}
                     />
                   </div>
 
-                  <div>
-                    <label
-                      htmlFor="password"
-                      className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5"
-                    >
-                      Contraseña de Acceso
-                    </label>
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      required
-                      placeholder="••••••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-sm transition-all"
-                    />
-                  </div>
+                  {!esGoogle && (
+                    <>
+                      <div>
+                        <label
+                          htmlFor="password"
+                          className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5"
+                        >
+                          Contraseña de Acceso
+                        </label>
+                        <div className="relative">
+                          <input
+                            id="password"
+                            name="password"
+                            type={verPassword ? "text" : "password"}
+                            required
+                            placeholder="••••••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full px-4 py-3 pr-11 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-sm transition-all"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setVerPassword((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                            aria-label={verPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                          >
+                            {verPassword ? (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                              </svg>
+                            ) : (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="confirm_password"
+                          className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5"
+                        >
+                          Confirmar Contraseña
+                        </label>
+                        <div className="relative">
+                          <input
+                            id="confirm_password"
+                            name="confirm_password"
+                            type={verConfirmPassword ? "text" : "password"}
+                            required
+                            placeholder="••••••••••••"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className={`w-full px-4 py-3 pr-11 rounded-xl border ${
+                              confirmPassword && password !== confirmPassword
+                                ? "border-red-400 focus:ring-red-500"
+                                : "border-slate-300 focus:ring-teal-600"
+                            } focus:outline-none focus:ring-2 focus:border-transparent text-sm transition-all`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setVerConfirmPassword((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                            aria-label={verConfirmPassword ? "Ocultar confirmación de contraseña" : "Mostrar confirmación de contraseña"}
+                          >
+                            {verConfirmPassword ? (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                              </svg>
+                            ) : (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                            )}
+                          </button>
+                        </div>
+                        {confirmPassword && password !== confirmPassword && (
+                          <p className="text-xs text-red-600 font-medium mt-1.5">
+                            Las contraseñas no coinciden.
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
 
                   <button
                     type="submit"
-                    disabled={cargando}
+                    disabled={botonBloqueado}
                     data-testid="btn-submit-registro"
-                    className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-teal-700 text-white font-semibold text-base hover:bg-teal-800 active:bg-teal-900 disabled:opacity-50 transition-all shadow-lg shadow-teal-700/25"
+                    className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-teal-700 text-white font-semibold text-base hover:bg-teal-800 active:bg-teal-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-teal-700/25"
                   >
                     {cargando ? (
                       <span className="flex items-center gap-2">

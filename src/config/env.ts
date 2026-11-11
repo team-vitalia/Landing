@@ -7,6 +7,12 @@ export const ENV = {
     const raw = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:8081";
     return raw.trim().replace(/\/+$/, "");
   },
+  get GOOGLE_CLIENT_ID(): string {
+    return (
+      process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.trim() ||
+      "393671162434-3e031lvkhq3107bfaa2to2hndsvu57tp.apps.googleusercontent.com"
+    );
+  },
   get PAYPAL_CLIENT_ID(): string {
     return (
       process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID?.trim() ||
