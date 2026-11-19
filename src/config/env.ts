@@ -4,8 +4,17 @@ export const ENV = {
     return raw.trim().replace(/\/+$/, "");
   },
   get APP_URL(): string {
-    const raw = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:8081";
-    return raw.trim().replace(/\/+$/, "");
+    const raw = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    if (raw && !raw.includes("localhost") && !raw.includes("127.0.0.1")) {
+      return raw.replace(/\/+$/, "");
+    }
+    if (typeof window !== "undefined") {
+      const hostname = window.location.hostname;
+      if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+        return "https://vitalia-app-fowe.vercel.app";
+      }
+    }
+    return (raw || "http://localhost:8081").replace(/\/+$/, "");
   },
   get GOOGLE_CLIENT_ID(): string {
     return (

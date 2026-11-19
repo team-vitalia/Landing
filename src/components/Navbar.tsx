@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ENV } from "@/config/env";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -59,7 +60,13 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-5">
+            <a
+              href={`${ENV.APP_URL}/login`}
+              className="text-sm font-semibold text-slate-700 hover:text-teal-700 transition-colors"
+            >
+              ¿Ya tienes cuenta?
+            </a>
             <Link
               href="/#planes"
               className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold rounded-xl bg-teal-700 text-white hover:bg-teal-800 transition-all shadow-sm shadow-teal-700/25"
@@ -132,7 +139,14 @@ export default function Navbar() {
           >
             Términos y Condiciones
           </Link>
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            <a
+              href={`${ENV.APP_URL}/login`}
+              onClick={() => setMenuOpen(false)}
+              className="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              ¿Ya tienes cuenta?
+            </a>
             <Link
               href="/#planes"
               onClick={() => setMenuOpen(false)}

@@ -20,16 +20,16 @@ export default function PricingSection({ plans }: PricingSectionProps) {
             Elige el plan ideal para tu clínica
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            Sin plazos forzosos ni comisiones ocultas. Selecciona el paquete que mejor se adapte a tu equipo e inicia en minutos con activación segura vía PayPal.
+            Sin plazos forzosos ni comisiones ocultas. Selecciona el paquete que mejor se adapte a tu equipo e inicia en minutos con activación segura vía PayPal o comienza con el plan gratuito.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 items-stretch">
           {currentPlans.map((plan) => (
             <div
               key={plan.id}
               data-testid="plan-card"
-              className={`relative flex flex-col rounded-3xl p-8 bg-white transition-all duration-300 ${
+              className={`relative flex flex-col rounded-3xl p-6 bg-white transition-all duration-300 ${
                 plan.popular
                   ? "border-2 border-teal-600 shadow-2xl shadow-teal-900/10 ring-4 ring-teal-600/10 lg:-translate-y-2.5 z-10"
                   : "border border-slate-200/90 shadow-sm hover:border-teal-300 hover:shadow-xl hover:shadow-slate-200/50"
@@ -59,10 +59,10 @@ export default function PricingSection({ plans }: PricingSectionProps) {
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-teal-50 text-teal-800 border border-teal-100">
-                    {plan.personalAccounts} cuentas
+                    {plan.personalAccounts} {plan.personalAccounts === 1 ? "cuenta" : "cuentas"}
                   </span>
                   <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                    {plan.patientLimit} pacientes
+                    {plan.id === "gratuito" ? `${plan.patientLimit} pac./mes` : `${plan.patientLimit} pacientes`}
                   </span>
                 </div>
               </div>
@@ -92,15 +92,17 @@ export default function PricingSection({ plans }: PricingSectionProps) {
 
               <div className="mt-auto pt-2">
                 <Link
-                  href={`/registro?plan_id=${plan.paypalPlanId}`}
+                  href={plan.id === "gratuito" ? "/registro?plan=gratuito" : `/registro?plan_id=${plan.paypalPlanId}`}
                   data-testid={`btn-contratar-${plan.id}`}
                   className={`w-full inline-flex items-center justify-center px-6 py-4 rounded-xl font-semibold text-sm transition-all duration-200 group ${
-                    plan.popular
+                    plan.id === "gratuito"
+                      ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md hover:shadow-lg"
+                      : plan.popular
                       ? "bg-teal-700 text-white hover:bg-teal-800 shadow-lg shadow-teal-700/30 hover:shadow-xl hover:shadow-teal-700/40"
                       : "bg-slate-900 text-white hover:bg-slate-800 shadow-md hover:shadow-lg"
                   }`}
                 >
-                  Contratar Plan
+                  {plan.id === "gratuito" ? "Comenzar Gratis" : "Contratar Plan"}
                   <svg
                     className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
                     fill="none"

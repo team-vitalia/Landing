@@ -19,26 +19,29 @@ describe("PricingSection", () => {
     process.env = originalEnv;
   });
 
-  test("renderiza exactamente las 4 tarjetas de los planes de VITALIA", () => {
+  test("renderiza exactamente las 5 tarjetas de los planes de VITALIA", () => {
     render(<PricingSection />);
 
     const planCards = screen.getAllByTestId("plan-card");
-    expect(planCards).toHaveLength(4);
+    expect(planCards).toHaveLength(5);
 
+    expect(screen.getByText("Gratuito")).toBeInTheDocument();
     expect(screen.getByText("Básico")).toBeInTheDocument();
     expect(screen.getByText("Clínica")).toBeInTheDocument();
     expect(screen.getByText("Profesional")).toBeInTheDocument();
     expect(screen.getByText("Empresarial")).toBeInTheDocument();
   });
 
-  test("los botones de contratacion redirigen al formulario de registro con el plan_id correspondiente", () => {
+  test("los botones de contratacion redirigen al formulario de registro correspondiente", () => {
     render(<PricingSection />);
 
+    const btnGratuito = screen.getByTestId("btn-contratar-gratuito");
     const btnBasico = screen.getByTestId("btn-contratar-basico");
     const btnClinica = screen.getByTestId("btn-contratar-clinica");
     const btnProfesional = screen.getByTestId("btn-contratar-profesional");
     const btnEmpresarial = screen.getByTestId("btn-contratar-empresarial");
 
+    expect(btnGratuito).toHaveAttribute("href", "/registro?plan=gratuito");
     expect(btnBasico).toHaveAttribute("href", "/registro?plan_id=P-9JA53339DW996433FNLXJMJA");
     expect(btnClinica).toHaveAttribute("href", "/registro?plan_id=P-18S21614P2665104JNLXJNKI");
     expect(btnProfesional).toHaveAttribute("href", "/registro?plan_id=P-32342459V8640593NNLXJN7A");
@@ -47,6 +50,9 @@ describe("PricingSection", () => {
 
   test("renderiza los limites de cuentas y pacientes requeridos para cada plan", () => {
     render(<PricingSection />);
+
+    expect(screen.getByText("1 cuenta")).toBeInTheDocument();
+    expect(screen.getByText("20 pac./mes")).toBeInTheDocument();
 
     expect(screen.getByText("3 cuentas")).toBeInTheDocument();
     expect(screen.getByText("100 pacientes")).toBeInTheDocument();

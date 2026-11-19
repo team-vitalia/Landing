@@ -15,6 +15,23 @@ export const getPlans = (): Plan[] => {
 
   return [
     {
+      id: "gratuito",
+      name: "Gratuito",
+      tagline: "Ideal para médicos particulares y consultorios independientes.",
+      price: 0,
+      period: "mes",
+      personalAccounts: 1,
+      patientLimit: 20,
+      paypalPlanId: "gratuito",
+      paypalUrl: "",
+      features: [
+        "1 cuenta de doctor",
+        "Hasta 20 pacientes al mes",
+        "Expedientes clínicos digitales",
+        "Agenda básica"
+      ]
+    },
+    {
       id: "basico",
       name: "Básico",
       tagline: "Ideal para consultorios independientes y médicos particulares.",

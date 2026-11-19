@@ -13,6 +13,7 @@ import { ENV } from "@/config/env";
 function RegistroContent() {
   const searchParams = useSearchParams();
   const planIdParam = searchParams.get("plan_id") || "";
+  const planParam = searchParams.get("plan") || "";
   const clinicaIdParam = searchParams.get("clinica_id") || "";
   const correoParam = searchParams.get("correo") || "";
   const nombreClinicaParam = searchParams.get("nombre_clinica") || "";
@@ -20,9 +21,11 @@ function RegistroContent() {
   const modoParam = searchParams.get("modo") || "";
 
   const esModoUpgrade = modoParam === "upgrade" || Boolean(clinicaIdParam);
+  const esPlanGratuito = planParam.toLowerCase() === "gratuito" || planIdParam.toLowerCase() === "gratuito";
 
   const allPlans = getPlans();
   const selectedPlan =
+    (esPlanGratuito ? allPlans.find((p) => p.id === "gratuito") : null) ||
     allPlans.find((p) => p.paypalPlanId === planIdParam) ||
     allPlans.find((p) => p.id === "clinica") ||
     allPlans[0];
@@ -216,6 +219,41 @@ function RegistroContent() {
         mostrarErrorToast("Las contraseñas no coinciden.");
         return;
       }
+    }
+
+    if (esPlanGratuito) {
+      setCargando(true);
+      try {
+        const respuesta = await fetch(`${apiUrl}/api/suscripciones/registro-gratuito`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nombre_clinica: nombreClinica.trim(),
+            nombre_doctor: nombreAdmin.trim(),
+            correo: correo.trim().toLowerCase(),
+            password: password,
+          }),
+        });
+
+        if (!respuesta.ok) {
+          const errorData = await respuesta.json().catch(() => ({}));
+          throw new Error(
+            errorData.detail || "Ocurrió un error al procesar el registro gratuito."
+          );
+        }
+
+        const datos = await respuesta.json();
+        mostrarExitoToast("Registro Exitoso", datos.mensaje || "Cuenta creada correctamente.");
+        window.location.href = `${ENV.APP_URL}/login`;
+        return;
+      } catch (err: any) {
+        mostrarErrorToast(err.message || "Error al conectar con el servidor.");
+      } finally {
+        setCargando(false);
+      }
+      return;
     }
 
     setCargando(true);
@@ -615,7 +653,7 @@ function RegistroContent() {
                       </span>
                     ) : (
                       <>
-                        <span>Continuar al Pago Seguro con PayPal</span>
+                        <span>{esPlanGratuito ? "Crear Cuenta Gratuita" : "Continuar al Pago Seguro con PayPal"}</span>
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>

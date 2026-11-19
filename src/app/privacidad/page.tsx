@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Aviso de Privacidad - VITALIA",
+  title: "Vitalia",
   description:
     "Aviso y política de privacidad oficial de VITALIA Gestión Clínica Inteligente conforme a la normativa de protección de datos personales.",
 };

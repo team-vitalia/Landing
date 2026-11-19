@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Términos y Condiciones - VITALIA",
+  title: "Vitalia",
   description:
     "Términos y condiciones de uso de la plataforma de gestión clínica VITALIA.",
 };

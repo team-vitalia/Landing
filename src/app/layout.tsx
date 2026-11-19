@@ -3,9 +3,17 @@ import "./globals.css";
 import "gooey-toast/styles.css";
 
 export const metadata: Metadata = {
-  title: "VITALIA - Gestión Clínica Inteligente",
+  title: {
+    default: "Vitalia",
+    template: "Vitalia",
+  },
   description:
     "Software integral para consultorios, clínicas y centros médicos. Agenda, expedientes de pacientes, inventario de medicamentos y recetas en un solo lugar.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
