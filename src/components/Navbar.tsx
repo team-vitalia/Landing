@@ -33,6 +33,7 @@ export default function Navbar() {
             </div>
           </Link>
 
+          {/* Navegación de escritorio */}
           <nav className="hidden md:flex items-center gap-8">
             <Link
               href="/#caracteristicas"
@@ -40,18 +41,30 @@ export default function Navbar() {
             >
               Características
             </Link>
+
+            <Link
+              href="https://team-vitalia.github.io/vitalia/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
+            >
+              Conócenos
+            </Link>
+
             <Link
               href="/#planes"
               className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
             >
               Planes y Precios
             </Link>
+
             <Link
               href="/privacidad"
               className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
             >
               Aviso de Privacidad
             </Link>
+
             <Link
               href="/terminos"
               className="text-sm font-medium text-slate-600 hover:text-teal-700 transition-colors"
@@ -60,6 +73,7 @@ export default function Navbar() {
             </Link>
           </nav>
 
+          {/* Acciones de escritorio */}
           <div className="hidden md:flex items-center gap-5">
             <a
               href={`${ENV.APP_URL}/login`}
@@ -67,6 +81,7 @@ export default function Navbar() {
             >
               ¿Ya tienes cuenta?
             </a>
+
             <Link
               href="/#planes"
               className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold rounded-xl bg-teal-700 text-white hover:bg-teal-800 transition-all shadow-sm shadow-teal-700/25"
@@ -75,12 +90,14 @@ export default function Navbar() {
             </Link>
           </div>
 
+          {/* Botón del menú móvil */}
           <div className="flex md:hidden">
             <button
               type="button"
               onClick={() => setMenuOpen(!menuOpen)}
               className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-              aria-label="Abrir menú"
+              aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={menuOpen}
             >
               <svg
                 className="w-6 h-6"
@@ -109,6 +126,7 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Menú móvil */}
       {menuOpen && (
         <div className="md:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-5 space-y-3">
           <Link
@@ -118,6 +136,17 @@ export default function Navbar() {
           >
             Características
           </Link>
+
+          <a
+            href="https://team-vitalia.github.io/vitalia/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMenuOpen(false)}
+            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-teal-700"
+          >
+            Conócenos
+          </a>
+
           <Link
             href="/#planes"
             onClick={() => setMenuOpen(false)}
@@ -125,6 +154,7 @@ export default function Navbar() {
           >
             Planes y Precios
           </Link>
+
           <Link
             href="/privacidad"
             onClick={() => setMenuOpen(false)}
@@ -132,6 +162,7 @@ export default function Navbar() {
           >
             Aviso de Privacidad
           </Link>
+
           <Link
             href="/terminos"
             onClick={() => setMenuOpen(false)}
@@ -139,6 +170,8 @@ export default function Navbar() {
           >
             Términos y Condiciones
           </Link>
+
+          {/* Acciones del menú móvil */}
           <div className="pt-2 space-y-2">
             <a
               href={`${ENV.APP_URL}/login`}
@@ -147,6 +180,7 @@ export default function Navbar() {
             >
               ¿Ya tienes cuenta?
             </a>
+
             <Link
               href="/#planes"
               onClick={() => setMenuOpen(false)}
